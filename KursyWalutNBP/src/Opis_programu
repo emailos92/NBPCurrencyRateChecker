@@ -1,0 +1,39 @@
+REPO: https://github.com/emailos92/NBPCurrencyRateChecker
+
+Aplikacja ma pobierać kursy walut ze strony lub webservisu NBP i zapisywać je do bazy danych.
+Dostarczać możliwości przeglądania i przeszukiwania już zapisanych wcześniej kursów z innych dni.
+
+NBP website: https://www.nbp.pl/home.aspx?f=/kursy/kursya.html
+
+Artykuły:
+SORTOWANIE: http://najavie.pl/sortowanie-obiektow-w-javie/
+ARRAY_LISTA: https://www.geeksforgeeks.org/arraylist-in-java/
+WŁASNA LISTA: https://javastart.pl/baza-wiedzy/algorytmy/jednokierunkowa-lista-wiazana
+YOUTUBE_FORM_INTELLIJ: https://www.youtube.com/watch?v=5vSyylPPEko
+ODPOWIEDNIKI SQL: https://kobietydokodu.pl/niezbednik-juniora-obsluga-dat-i-czasu/
+GET WEBSITE: https://javastart.pl/baza-wiedzy/frameworki/jsoup
+
+założenia:
+    - aplikacja automatycznie pobiera średnie kursy walut każdego dnia o określonej godzinie lub
+      jeśli po uruchomieniu mineła godzina pobrania kursów i nie mamy w bazie danych aktualnych kursu na dany dzien
+      (komunikat o braku połączenia sieciowego)
+    - określona maksymalna ilośc walut w jednym dniu to 1000
+    - program potrafi przeglądać kursy walut w danym okresie czasu (dobrze byłoby dodać wykres ale nie koniecznie)
+    - program potrafi przesukiwać/przeliczać kursy w danym okresie czasu i wyświetlać:
+            * najwyższy-średni-najniższy kurs danej waluty w określanym czasie
+    - baza danych postgreSQL, tablice dla każdej waluty oddzielne, kolumny w tablicy: data, kurs
+
+MODEL:
+
+    Waluta
+        -> nazwa
+        -> kod
+        -> kurs
+
+    ListaWalut
+        -> data_początkowa
+        -> data_końcowa
+        -> lista walut (data_końcowa - data_początkowa)
+
+
+
