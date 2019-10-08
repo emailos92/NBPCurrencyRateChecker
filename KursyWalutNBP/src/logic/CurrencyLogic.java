@@ -10,14 +10,26 @@ public class CurrencyLogic {
             "100 INR", "100 KRW", "1 CNY", "1 XDR"
     };
 
+    private static final String[] CURRENCIES_NAMES = new String[]{
+            "bat (Tajlandia)", "dolar amerykański", "dolar australijski", "dolar Hongkongu", "dolar kanadyjski",
+            "dolar nowozelandzki", "dolar singapurski", "euro", "forint", "frank szwajcarski", "funt szterling",
+            "hrywna (Ukraina)", "jen (Japonia)", "korona czeska", "korona duńska", "korona islandzka",
+            "korona norweska", "korona szwedzka", "kuna (Chorwacja)", "lej rumuński", "lew (Bułgaria)", "lira turecka",
+            "nowy izraelski szekel", "peso chilijskie", "peso filipińskie", "peso meksykańskie", "rand (Republika Południowej Afryki)",
+            "real (Brazylia)", "ringgit (Malezja)", "rubel rosyjski", "rupia indonezyjska", "rupia indyjska", "won południowokoreański",
+            "yuan renminbi (Chiny)", "SDR (MFW)"
+    };
+
     public int getCurrencyUniqueId(String currencyCode) {
         for (int i = 0; i < CURRENCIES_CODES.length; i++) {
             if (CURRENCIES_CODES[i].equals(currencyCode)) {
-                return i + 1; //return unique id of currency
+                return i; //return unique id of currency
             }
         }
         return 0;
     }
 
-
+    public String getCurrencyName(int uniqueId) {
+        return CURRENCIES_NAMES[uniqueId];
+    }
 }

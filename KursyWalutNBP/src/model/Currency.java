@@ -1,22 +1,16 @@
 package model;
 
 public class Currency {
-    private String name;
     private String code;
     private double exchangeRate;
 
-    public Currency(String name, String code, double avgCourseInPln) {
-        this.name = name;
+    public Currency(){
+
+    }
+
+    public Currency(String code, double exchangeRate) {
         this.code = code;
         this.exchangeRate = exchangeRate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCode() {
@@ -27,15 +21,15 @@ public class Currency {
         this.code = code;
     }
 
-    public double getAvgCourseInPln() {
+    public double getExchangeRate() {
         return exchangeRate;
     }
 
-    public void setAvgCourseInPln(double exchangeRate) {
+    public void setExchangeRate(double exchangeRate) {
         this.exchangeRate = exchangeRate;
     }
 
     public String getInfo(){
-        return name + " " + code + " Kurs w PLN: " + exchangeRate;
+        return code + " : " + exchangeRate;
     }
 }

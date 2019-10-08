@@ -21,7 +21,7 @@ założenia:
     - program potrafi przeglądać kursy walut w danym okresie czasu (dobrze byłoby dodać wykres ale nie koniecznie)
     - program potrafi przesukiwać/przeliczać kursy w danym okresie czasu i wyświetlać:
             * najwyższy-średni-najniższy kurs danej waluty w określanym czasie
-    - baza danych postgreSQL, tablice dla każdej waluty oddzielne, kolumny w tablicy: data, kurs
+    - baza danych postgreSQL, tablice dla każdej waluty oddzielne (data, kurs), tablica unikalnej nazwy tabeli (data, unkalna nazwa tabeli)
 
 MODEL:
 

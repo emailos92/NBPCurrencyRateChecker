@@ -2,15 +2,22 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class CurrencyList {
+public class CurrencyTable {
     private final static int MAX_CURRENCIES = 1000;
 
-    ArrayList<Currency> currencies = new ArrayList<Currency> (MAX_CURRENCIES);
+    ArrayList<Currency> currencies = new ArrayList<Currency>(MAX_CURRENCIES);
     private int currenciesNumber;
     private String uniqueTableName;
     private LocalDate dateOfTable;
+
+    public ArrayList<Currency> getCurrencies() {
+        return currencies;
+    }
+
+    public void setCurrencies(ArrayList<Currency> currencies) {
+        this.currencies = currencies;
+    }
 
     public int getCurrenciesNumber() {
         return currenciesNumber;
@@ -28,8 +35,16 @@ public class CurrencyList {
         this.uniqueTableName = uniqueTableName;
     }
 
+    public LocalDate getDateOfTable() {
+        return dateOfTable;
+    }
+
+    public void setDateOfTable(LocalDate dateOfTable) {
+        this.dateOfTable = dateOfTable;
+    }
+
     public void addCurrency(Currency currency) {
-        if(currenciesNumber < MAX_CURRENCIES){
+        if (currenciesNumber < MAX_CURRENCIES) {
             currencies.add(currency);
             currenciesNumber++;
         } else {
@@ -37,8 +52,12 @@ public class CurrencyList {
         }
     }
 
-
-
+    public void printCurrencies() {
+        System.out.println(uniqueTableName + " " + " z dnia " + dateOfTable);
+        for (int i = 0; i < currenciesNumber; i++) {
+            System.out.println(currencies.get(i).getInfo());
+        }
+    }
 
 
 }
