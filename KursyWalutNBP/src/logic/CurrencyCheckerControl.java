@@ -2,6 +2,7 @@ package logic;
 
 import io.DataReader;
 import io.WebsiteReader;
+import model.CurrencyList;
 import model.CurrencyTable;
 
 import java.io.IOException;
@@ -18,12 +19,14 @@ public class CurrencyCheckerControl {
     private final static int DELETE_CURRENCY_RATES = 4;
     private final static int WRITE_CURRENCY_TABLE_TO_DATABASE = 5;
     private final static int DELETE_CURRENCY_TABLE_FROM_DATABASE = 6;
+    private final static int READ_CURRENCY_LIST = 7;
 
     // zmienna do komunikacji z użytkownikiem
     private DataReader dataReader = new DataReader();
     private WebsiteControl websiteControl = new WebsiteControl();
     private DatabaseControl databaseControl = new DatabaseControl();
     private CurrencyTable currencyTable = new CurrencyTable();
+    private CurrencyList currencyList = new CurrencyList();
     private CurrencyLogic currencyLogic = new CurrencyLogic();
 
     /*
@@ -67,7 +70,15 @@ public class CurrencyCheckerControl {
                     break;
                 case DELETE_CURRENCY_TABLE_FROM_DATABASE:
                     try {
-                        databaseControl.deleteCurrencyTables(LocalDate.of(2019,10,9));
+                        databaseControl.deleteCurrencyTables(LocalDate.of(2019, 10, 9));
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+                case READ_CURRENCY_LIST:
+                    try {
+                        currencyList = databaseControl.readCurrencyList("aud_1",LocalDate.of(2019, 10, 9),LocalDate.of(2019, 10, 9));
+                        System.out.println(currencyList.getInfo());
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
@@ -89,7 +100,8 @@ public class CurrencyCheckerControl {
         System.out.println(GET_AND_PRINT_NEXT_CURRENCY + " - pobierz nastepną walute i usun z tabeli");
         System.out.println(DELETE_CURRENCY_RATES + " - usun pobraną tabele kursów");
         System.out.println(WRITE_CURRENCY_TABLE_TO_DATABASE + " - zapisz aktualne kursy walut do bazy danych");
-        System.out.println(DELETE_CURRENCY_TABLE_FROM_DATABASE + " - usun tabele kursów z dnia");
+        System.out.println(DELETE_CURRENCY_TABLE_FROM_DATABASE + " - usun tabele kursów z bazy danych");
+        System.out.println(READ_CURRENCY_LIST + " - odczytaj listę kursów z okresu dat");
     }
 
     private void exit() {

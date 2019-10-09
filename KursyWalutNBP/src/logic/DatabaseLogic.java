@@ -97,6 +97,35 @@ public class DatabaseLogic {
         preparedStatement.executeUpdate();
     }
 
+    public CurrencyList readCurrencyList(DatabaseConnector db, String tableName, LocalDate date_from, LocalDate date_to) throws SQLException {
+        String query = new String();
+        CurrencyList currencyList = new CurrencyList();
+        query = "select * from " + tableName + " where date >= '" + Date.valueOf(date_from) + "' and date <= '" + Date.valueOf(date_to) + "'";
+        //System.out.println(query);
+
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
+        ResultSet result = preparedStatement.executeQuery();
+
+        currencyList.setCurrencyCode(currencyLogic.getCurrencyCode(tableName));
+        while (result.next()) {
+            LocalDate date = result.getDate("date").toLocalDate();
+            double exchangeRate = result.getDouble("exchangerate");
+            //System.out.println(date + "\t" + exchangeRate);
+            currencyList.addToCurrencyList(date,exchangeRate);
+        }
+        //System.out.println(currencyList.getInfo());
+
+        return currencyList;
+    }
+
+    public ArrayList<CurrencyList> readArrayListOfCurrencyList(DatabaseConnector db, ArrayList<String> currenciesTableNames, LocalDate date_from, LocalDate date_to) throws SQLException {
+        ArrayList<CurrencyList> arrayListOfCurrencyList = new ArrayList<>();
+        for (int i = 0; i < currenciesTableNames.size(); i++) {
+            arrayListOfCurrencyList.add(readCurrencyList(db,currenciesTableNames.get(0),date_from,date_to));
+        }
+
+        return arrayListOfCurrencyList;
+    }
 
 
 //
@@ -119,5 +148,6 @@ public class DatabaseLogic {
     public void close(DatabaseConnector db) {
         db.closeConnection();
     }
+
 
 }

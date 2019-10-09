@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class CurrencyList {
     private String currencyCode; //determine list of specific currency
     private ArrayList<Double> exchangeRates = new ArrayList<Double>();
-    private ArrayList<LocalDate> date = new ArrayList<LocalDate>();
+    private ArrayList<LocalDate> dates = new ArrayList<LocalDate>();
 
     public String getCurrencyCode() {
         return currencyCode;
@@ -16,21 +16,25 @@ public class CurrencyList {
         this.currencyCode = currencyCode;
     }
 
-    public void addCurrency(Currency currency, LocalDate dateOfExchangeRate) {
-        if (currency.getCode().equals(currencyCode)) {
-            exchangeRates.add(currency.getExchangeRate());
-            date.add(dateOfExchangeRate);
-        } else {
-            throw new IllegalArgumentException("Wrong currency in argument, correct is " + currencyCode);
-        }
+    public void addToCurrencyList(LocalDate date, double exchangeRate) {
+        dates.add(date);
+        exchangeRates.add(exchangeRate);
     }
 
-    public void getInfo() {
+    public void clear(){
+        dates.clear();
+        exchangeRates.clear();
+        currencyCode = null;
+    }
+
+    public String getInfo() {
         String info = new String();
-        info += "CurrencyList with " + date.size() + "elements" + "\n";
-        for (int i = 0; i < date.size(); i++) {
-            info += date.get(i) + " : " + exchangeRates.get(i) + "\n";
+        info += "CurrencyList (" + currencyCode + ") have " + dates.size() + " elements" + "\n";
+        for (int i = 0; i < dates.size(); i++) {
+            info += i + ":" + dates.get(i) + " : " + exchangeRates.get(i) + "\n";
         }
+
+        return info;
     }
 
 }

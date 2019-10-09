@@ -31,7 +31,7 @@ public class CurrencyLogic {
             "inr_100", "krw_100", "cny_1", "xdr_1",
     };
 
-    public int getCurrencyUniqueId(String currencyCode) {
+    public int getCurrencyUniqueIdFromCurrencyCode(String currencyCode) {
         for (int i = 0; i < CURRENCIES_CODES.length; i++) {
             if (CURRENCIES_CODES[i].equals(currencyCode)) {
                 return i; //return unique id of currency
@@ -40,11 +40,24 @@ public class CurrencyLogic {
         throw new IllegalArgumentException("Wrong currency code ( " + currencyCode + " ), we don't support it yet");
     }
 
+    public int getCurrencyUniqueIdFromSqlTableName(String currencySqlTableName) {
+        for (int i = 0; i < CURRENCIES_TABLES_SQL.length; i++) {
+            if (CURRENCIES_TABLES_SQL[i].equals(currencySqlTableName)) {
+                return i; //return unique id of currency
+            }
+        }
+        throw new IllegalArgumentException("Wrong currency table name ( " + currencySqlTableName + " ), we don't support it yet");
+    }
+
     public String getCurrencyName(String currencyCode) {
-        return CURRENCIES_NAMES[getCurrencyUniqueId(currencyCode)];
+        return CURRENCIES_NAMES[getCurrencyUniqueIdFromCurrencyCode(currencyCode)];
     }
 
     public String getCurrencySqlTableName(String currencyCode){
-        return CURRENCIES_TABLES_SQL[getCurrencyUniqueId(currencyCode)];
+        return CURRENCIES_TABLES_SQL[getCurrencyUniqueIdFromCurrencyCode(currencyCode)];
+    }
+
+    public String getCurrencyCode(String currencySqlTableName){
+        return CURRENCIES_CODES[getCurrencyUniqueIdFromSqlTableName(currencySqlTableName)];
     }
 }
