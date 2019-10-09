@@ -13,6 +13,8 @@ YOUTUBE_FORM_INTELLIJ: https://www.youtube.com/watch?v=5vSyylPPEko
 ODPOWIEDNIKI SQL: https://kobietydokodu.pl/niezbednik-juniora-obsluga-dat-i-czasu/
 GET WEBSITE: https://javastart.pl/baza-wiedzy/frameworki/jsoup
 
+JDBC CONNECTION, STATEMENT, RESULTSET: https://stackoverflow.com/questions/2225221/closing-database-connections-in-java
+
 założenia:
     - aplikacja automatycznie pobiera średnie kursy walut każdego dnia o określonej godzinie lub
       jeśli po uruchomieniu mineła godzina pobrania kursów i nie mamy w bazie danych aktualnych kursu na dany dzien

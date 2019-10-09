@@ -1,6 +1,7 @@
 package logic;
 
 import io.DataReader;
+import io.DatabaseConnector;
 import io.WebsiteReader;
 import model.CurrencyTable;
 
@@ -18,6 +19,7 @@ public class CurrencyCheckerControl {
     private DataReader dataReader = new DataReader();
     private WebsiteReader websiteReader = new WebsiteReader();
     private WebsiteParser websiteParser = new WebsiteParser();
+    private DatabaseConnector databaseConnector = new DatabaseConnector();
     private CurrencyTable currencyTable = new CurrencyTable();
 
     /*
@@ -47,7 +49,10 @@ public class CurrencyCheckerControl {
 
                 case WRITE_CURRENCY_RATES_TO_DATABASE:
 
-                    System.out.println("Zapisz tabele kursów do bazy danych");
+                    if(!databaseConnector.getConnectionIsOpened()) {
+                        databaseConnector.makeConnection();
+                    }
+                    databaseConnector.closeConnection();
                     break;
                 case EXIT:
                     exit();
@@ -70,6 +75,7 @@ public class CurrencyCheckerControl {
     private void exit() {
         System.out.println("Koniec programu, papa!");
         // zamykamy strumień wejścia
+        databaseConnector.closeConnection();
         dataReader.close();
     }
 
