@@ -21,6 +21,7 @@ public class CurrencyCheckerControl {
     private WebsiteParser websiteParser = new WebsiteParser();
     private DatabaseConnector databaseConnector = new DatabaseConnector();
     private CurrencyTable currencyTable = new CurrencyTable();
+    private CurrencyLogic currencyLogic = new CurrencyLogic();
 
     /*
      * Główna metoda programu, która pozwala na wybór opcji i interakcję
@@ -51,6 +52,8 @@ public class CurrencyCheckerControl {
 
                     if(!databaseConnector.getConnectionIsOpened()) {
                         databaseConnector.makeConnection();
+
+
                     }
                     databaseConnector.closeConnection();
                     break;

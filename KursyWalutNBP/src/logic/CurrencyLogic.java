@@ -7,7 +7,7 @@ public class CurrencyLogic {
             "100 HUF", "1 CHF", "1 GBP", "1 UAH", "100 JPY", "1 CZK", "1 DKK",
             "100 ISK", "1 NOK", "1 SEK", "1 HRK", "1 RON", "1 BGN", "1 TRY", "1 ILS",
             "100 CLP", "1 PHP", "1 MXN", "1 ZAR", "1 BRL", "1 MYR", "1 RUB", "10000 IDR",
-            "100 INR", "100 KRW", "1 CNY", "1 XDR"
+            "100 INR", "100 KRW", "1 CNY", "1 XDR",
     };
 
     private static final String[] CURRENCIES_NAMES = new String[]{
@@ -17,7 +17,15 @@ public class CurrencyLogic {
             "korona norweska", "korona szwedzka", "kuna (Chorwacja)", "lej rumuński", "lew (Bułgaria)", "lira turecka",
             "nowy izraelski szekel", "peso chilijskie", "peso filipińskie", "peso meksykańskie", "rand (Republika Południowej Afryki)",
             "real (Brazylia)", "ringgit (Malezja)", "rubel rosyjski", "rupia indonezyjska", "rupia indyjska", "won południowokoreański",
-            "yuan renminbi (Chiny)", "SDR (MFW)"
+            "yuan renminbi (Chiny)", "SDR (MFW)",
+    };
+
+    private static final String[] CURRENCIES_TABLES_SQL = new String[]{
+            "thb_1", "usd_1", "aud_1", "hkd_1", "cad_1", "nzd_1", "sgd_1", "eur_1",
+            "huf_100", "chf_1", "gbp_1", "uah_1", "jpy_100", "czk_1", "dkk_1",
+            "isk_100", "nok_1", "sek_1", "hrk_1", "ron_1", "bgn_1", "try_1", "ils_1",
+            "clp_100", "php_1", "mxn_1", "zar_1", "brl_1", "myr_1", "rub_1", "idr_10000",
+            "inr_100", "krw_100", "cny_1", "xdr_1",
     };
 
     public int getCurrencyUniqueId(String currencyCode) {
@@ -26,10 +34,15 @@ public class CurrencyLogic {
                 return i; //return unique id of currency
             }
         }
-        return 0;
+        throw new IllegalArgumentException("Wrong currency code ( " + currencyCode + " ), we don't support it yet");
     }
 
     public String getCurrencyName(int uniqueId) {
         return CURRENCIES_NAMES[uniqueId];
     }
+
+    public String getCurrencySqlTableName(int uniqueId){
+        return CURRENCIES_TABLES_SQL[uniqueId];
+    }
+
 }

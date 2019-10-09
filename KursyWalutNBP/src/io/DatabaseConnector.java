@@ -43,6 +43,7 @@ public class DatabaseConnector {
         if(connectionIsOpened){
             try {
                 connection.close();
+                connectionIsOpened = false;
                 System.out.println("Disconnected from PostgreSQL database ;)");
             } catch (SQLException ex) {
                 ex.printStackTrace();
