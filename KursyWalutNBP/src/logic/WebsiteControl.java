@@ -1,18 +1,23 @@
 package logic;
 
+import io.WebsiteReader;
 import model.Currency;
 import model.CurrencyTable;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class WebsiteParser {
+public class WebsiteControl {
 
+    private static final String website = "https://www.nbp.pl/home.aspx?f=/kursy/kursya.html";
     private final static String uniqueIdStart = "Tabela nr ";
     private final static String uniqueIdEnd = " z dnia ";
+
+    WebsiteReader websiteReader = new WebsiteReader();
 
     private String getUniqueTableIdFromString(String input) {
         int indexUniqueIdStart = input.indexOf(uniqueIdStart);
@@ -26,7 +31,10 @@ public class WebsiteParser {
         return input.substring(indexUniqueIdStart + uniqueIdEnd.length(), indexUniqueIdEnd);
     }
 
-    public CurrencyTable parseWebsite(Document document) throws RuntimeException {
+    public CurrencyTable parseWebsite() throws RuntimeException, IOException {
+
+        Document document = websiteReader.getNewWebsite(website);
+
         CurrencyTable currenciesTable = new CurrencyTable();
         Currency currency = new Currency();
         String input = document.select("p").get(3).text();
@@ -64,6 +72,10 @@ public class WebsiteParser {
 //        }
 
         return currenciesTable;
+    }
+
+    public void close(){
+
     }
 
 }

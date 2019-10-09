@@ -1,5 +1,8 @@
 package logic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class CurrencyLogic {
 
     private static final String[] CURRENCIES_CODES = new String[]{
@@ -37,12 +40,11 @@ public class CurrencyLogic {
         throw new IllegalArgumentException("Wrong currency code ( " + currencyCode + " ), we don't support it yet");
     }
 
-    public String getCurrencyName(int uniqueId) {
-        return CURRENCIES_NAMES[uniqueId];
+    public String getCurrencyName(String currencyCode) {
+        return CURRENCIES_NAMES[getCurrencyUniqueId(currencyCode)];
     }
 
-    public String getCurrencySqlTableName(int uniqueId){
-        return CURRENCIES_TABLES_SQL[uniqueId];
+    public String getCurrencySqlTableName(String currencyCode){
+        return CURRENCIES_TABLES_SQL[getCurrencyUniqueId(currencyCode)];
     }
-
 }

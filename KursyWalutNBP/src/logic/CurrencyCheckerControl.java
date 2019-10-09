@@ -1,25 +1,28 @@
 package logic;
 
 import io.DataReader;
-import io.DatabaseConnector;
 import io.WebsiteReader;
 import model.CurrencyTable;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class CurrencyCheckerControl {
     // zmienne do kontrolowania programu
     private final static int EXIT = 0;
-    private final static int GET_CURRENCY_RATES = 1;
-    private final static int SHOW_CURRENCY_RATES = 2;
-    private final static int DELETE_CURRENCY_RATES = 3;
-    private final static int WRITE_CURRENCY_RATES_TO_DATABASE = 4;
+    private final static int GET_CURRENCY_RATES_FROM_WEBSITE = 1;
+    private final static int PRINT_INFO_OF_CURRENCY_RATES = 2;
+    private final static int GET_AND_PRINT_NEXT_CURRENCY = 3;
+    private final static int DELETE_CURRENCY_RATES = 4;
+    private final static int WRITE_CURRENCY_TABLE_TO_DATABASE = 5;
+    private final static int DELETE_CURRENCY_TABLE_FROM_DATABASE = 6;
 
     // zmienna do komunikacji z użytkownikiem
     private DataReader dataReader = new DataReader();
-    private WebsiteReader websiteReader = new WebsiteReader();
-    private WebsiteParser websiteParser = new WebsiteParser();
-    private DatabaseConnector databaseConnector = new DatabaseConnector();
+    private WebsiteControl websiteControl = new WebsiteControl();
+    private DatabaseControl databaseControl = new DatabaseControl();
     private CurrencyTable currencyTable = new CurrencyTable();
     private CurrencyLogic currencyLogic = new CurrencyLogic();
 
@@ -33,29 +36,41 @@ public class CurrencyCheckerControl {
             printOptions();
             option = dataReader.getInt();
             switch (option) {
-                case GET_CURRENCY_RATES: //pobierz tabele ze strony www NBP
+                case GET_CURRENCY_RATES_FROM_WEBSITE: //pobierz tabele ze strony www NBP
                     try {
-                        currencyTable = websiteParser.parseWebsite(websiteReader.getNewCurrencyList());
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                        currencyTable = websiteControl.parseWebsite();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                     break;
-                case SHOW_CURRENCY_RATES: //wyswietl aktualną tabele ze strony www z pamieci programu
-                    currencyTable.printCurrencies();
+                case PRINT_INFO_OF_CURRENCY_RATES: //wyswietl aktualną tabele ze strony www z pamieci programu
+                    System.out.println(currencyTable.getInfo());
                     break;
 
+                case GET_AND_PRINT_NEXT_CURRENCY:
+                    if (!currencyTable.isEmpty()) {
+                        System.out.println(currencyTable.getCurrency().getInfo());
+                    } else {
+                        System.out.println("No more currency in table");
+                    }
+                    break;
                 case DELETE_CURRENCY_RATES:
-                    currencyTable.setCurrenciesNumber(0);
+                    currencyTable.clear();
                     break;
 
-                case WRITE_CURRENCY_RATES_TO_DATABASE:
-
-                    if(!databaseConnector.getConnectionIsOpened()) {
-                        databaseConnector.makeConnection();
-
-
+                case WRITE_CURRENCY_TABLE_TO_DATABASE:
+                    try {
+                        databaseControl.insertCurrencyTable(currencyTable);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
                     }
-                    databaseConnector.closeConnection();
+                    break;
+                case DELETE_CURRENCY_TABLE_FROM_DATABASE:
+                    try {
+                        databaseControl.deleteCurrencyTables(LocalDate.of(2019,10,9));
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
                     break;
                 case EXIT:
                     exit();
@@ -69,16 +84,18 @@ public class CurrencyCheckerControl {
     private void printOptions() {
         System.out.println("Wybierz opcję: ");
         System.out.println(EXIT + " - wyjście z programu");
-        System.out.println(GET_CURRENCY_RATES + " - pobierz tabele kursow z www");
-        System.out.println(SHOW_CURRENCY_RATES + " - pokaż pobraną tabele kursów");
-        System.out.println(DELETE_CURRENCY_RATES + " - usun z pamieci pobraną tabele kursów");
-        System.out.println(WRITE_CURRENCY_RATES_TO_DATABASE + " - zapisz aktualne kursy walut do bazy danych");
+        System.out.println(GET_CURRENCY_RATES_FROM_WEBSITE + " - pobierz tabele kursow z www");
+        System.out.println(PRINT_INFO_OF_CURRENCY_RATES + " - pokaż pobraną tabele kursów");
+        System.out.println(GET_AND_PRINT_NEXT_CURRENCY + " - pobierz nastepną walute i usun z tabeli");
+        System.out.println(DELETE_CURRENCY_RATES + " - usun pobraną tabele kursów");
+        System.out.println(WRITE_CURRENCY_TABLE_TO_DATABASE + " - zapisz aktualne kursy walut do bazy danych");
+        System.out.println(DELETE_CURRENCY_TABLE_FROM_DATABASE + " - usun tabele kursów z dnia");
     }
 
     private void exit() {
         System.out.println("Koniec programu, papa!");
-        // zamykamy strumień wejścia
-        databaseConnector.closeConnection();
+        websiteControl.close();
+        databaseControl.close();
         dataReader.close();
     }
 

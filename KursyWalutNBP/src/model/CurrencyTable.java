@@ -2,30 +2,13 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class CurrencyTable {
-    private final static int MAX_CURRENCIES = 1000;
 
-    ArrayList<Currency> currencies = new ArrayList<Currency>(MAX_CURRENCIES);
-    private int currenciesNumber;
+    ArrayList<Currency> currencies = new ArrayList<Currency>();
     private String uniqueTableName;
     private LocalDate dateOfTable;
-
-    public ArrayList<Currency> getCurrencies() {
-        return currencies;
-    }
-
-    public void setCurrencies(ArrayList<Currency> currencies) {
-        this.currencies = currencies;
-    }
-
-    public int getCurrenciesNumber() {
-        return currenciesNumber;
-    }
-
-    public void setCurrenciesNumber(int currenciesNumber) {
-        this.currenciesNumber = currenciesNumber;
-    }
 
     public String getUniqueTableName() {
         return uniqueTableName;
@@ -43,21 +26,35 @@ public class CurrencyTable {
         this.dateOfTable = dateOfTable;
     }
 
+    public boolean isEmpty() {
+        return currencies.isEmpty();
+    }
+
     public void addCurrency(Currency currency) {
-        if (currenciesNumber < MAX_CURRENCIES) {
-            currencies.add(currency);
-            currenciesNumber++;
+        currencies.add(currency);
+    }
+
+    public Currency getCurrency() {
+        if (currencies.size() > 0) {
+            Currency currency = currencies.get(0);
+            currencies.remove(0);
+            return currency;
         } else {
-            System.out.println("MAX CURRENCIES (" + MAX_CURRENCIES + ") IN LIST REACHED!!!");
+            throw new NoSuchElementException("Currencies table is empty!");
         }
     }
 
-    public void printCurrencies() {
-        System.out.println(uniqueTableName + " " + " z dnia " + dateOfTable);
-        for (int i = 0; i < currenciesNumber; i++) {
-            System.out.println(currencies.get(i).getInfo());
-        }
+    public void clear() {
+        currencies.clear();
     }
 
+    public String getInfo() {
+        String info = new String();
+        info += uniqueTableName + " " + " z dnia " + dateOfTable + "(" + currencies.size() + ")\n";
+        for (int i = 0; i < currencies.size(); i++) {
+            info += currencies.get(i).getInfo() + "\n";
+        }
+        return info;
+    }
 
 }

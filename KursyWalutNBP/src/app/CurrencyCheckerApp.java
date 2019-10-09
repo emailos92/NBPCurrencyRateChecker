@@ -1,4 +1,6 @@
-package logic;
+package app;
+
+import logic.CurrencyCheckerControl;
 
 public class CurrencyCheckerApp {
     private static final String APP_NAME = "CurrencyRate Checker V0.1";
