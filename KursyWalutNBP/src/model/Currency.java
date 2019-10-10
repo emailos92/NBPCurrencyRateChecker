@@ -1,24 +1,14 @@
 package model;
 
 public class Currency {
-    private String code;
+
     private double exchangeRate;
 
-    public Currency(){
-
+    public Currency() {
     }
 
-    public Currency(String code, double exchangeRate) {
-        this.code = code;
+    public Currency(double exchangeRate) {
         this.exchangeRate = exchangeRate;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public double getExchangeRate() {
@@ -30,6 +20,6 @@ public class Currency {
     }
 
     public String getInfo(){
-        return code + " : " + exchangeRate;
+        return String.valueOf(exchangeRate);
     }
 }

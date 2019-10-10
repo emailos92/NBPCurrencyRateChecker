@@ -1,8 +1,8 @@
 package logic;
 
 import io.WebsiteReader;
-import model.Currency;
-import model.CurrencyTable;
+import model.CurrencyRow;
+import model.CurrencyRowElem;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -31,26 +31,27 @@ public class WebsiteControl {
         return input.substring(indexUniqueIdStart + uniqueIdEnd.length(), indexUniqueIdEnd);
     }
 
-    public CurrencyTable parseWebsite() throws RuntimeException, IOException {
+    public CurrencyRow parseWebsite() throws RuntimeException, IOException {
 
         Document document = websiteReader.getNewWebsite(website);
 
-        CurrencyTable currenciesTable = new CurrencyTable();
-        Currency currency = new Currency();
+        CurrencyRow currencyRow = new CurrencyRow();
         String input = document.select("p").get(3).text();
 
         if (!(input.contains(uniqueIdStart) && input.contains(uniqueIdEnd))) {
             throw new IllegalArgumentException("Wrong input data (unique table name of currencies rate)");
         }
 
-        String uniqueTableName = getUniqueTableIdFromString(input);
-        currenciesTable.setUniqueTableName(uniqueTableName);
+        //set name
+        String name = getUniqueTableIdFromString(input);
+        currencyRow.setName(name);
 
+        //set date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate tabelOfDate = LocalDate.parse(getDateOfTableIdFromString(input), formatter);
-        currenciesTable.setDateOfTable(tabelOfDate);
+        LocalDate date = LocalDate.parse(getDateOfTableIdFromString(input), formatter);
+        currencyRow.setDate(date);
 
-//        System.out.println(uniqueTableName + " : " + tabelOfDate);
+//      System.out.println(uniqueTableName + " : " + tabelOfDate);
         Element table = document.select("table").get(4);
         Elements rows = table.select("tr");
         for (int i = 1; i < rows.size(); i++) { //first row is the col names so skip it.
@@ -59,19 +60,19 @@ public class WebsiteControl {
 
             double exchangeRate = Double.parseDouble((cols.get(2).text()).replace(",","."));
             String code = cols.get(1).text();
-            currenciesTable.addCurrency(new Currency(code,exchangeRate));
-//            for (int j = 0; j < cols.size(); j++) {
-//                System.out.println(cols.get(j).text());
-//            }
+            currencyRow.add(new CurrencyRowElem(code,exchangeRate));
         }
 
-//        currenciesTable.printCurrencies();
+        //System.out.println("Pobrano tabele " + name + " + z dnia " + date);
+
+        System.out.println(currencyRow.getInfo());
+
 //        Elements allH1 = document.select("p");
 //        for (Element elem : allH1) {
 //            System.out.println(elem.text());
 //        }
 
-        return currenciesTable;
+        return currencyRow;
     }
 
     public void close(){

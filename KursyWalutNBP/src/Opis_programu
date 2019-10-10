@@ -12,6 +12,7 @@ WŁASNA LISTA: https://javastart.pl/baza-wiedzy/algorytmy/jednokierunkowa-lista-
 YOUTUBE_FORM_INTELLIJ: https://www.youtube.com/watch?v=5vSyylPPEko
 ODPOWIEDNIKI SQL: https://kobietydokodu.pl/niezbednik-juniora-obsluga-dat-i-czasu/
 GET WEBSITE: https://javastart.pl/baza-wiedzy/frameworki/jsoup
+WYKRESY: https://www.boraji.com/jfreechart-time-series-chart-example
 
 JDBC CONNECTION, STATEMENT, RESULTSET: https://stackoverflow.com/questions/2225221/closing-database-connections-in-java
 
@@ -40,4 +41,17 @@ MODEL:
         -> lista walut (data_końcowa - data_początkowa)
 
 
+DATABASE:
 
+TABELE: tables, eur_1, usd_1, gbp_1, ... others currencies
+
+tables : date, name          eur_1 : date , exchangerate      ... others currencies
+
+ROW:  MULTIPLE CURRENCIES, ONE_DATE
+COLUMN: ONE_CURRENCIE, MULTIPLE_DATES
+
+CurrencyRowElem have code as id and exchangeRate as value
+CurrencyRow have date as id and CurrencyRowElem as value
+
+CurrencyColElem have date as id and exchange rate as value
+CurrencyCol have code as id and CurrencyColElem as value

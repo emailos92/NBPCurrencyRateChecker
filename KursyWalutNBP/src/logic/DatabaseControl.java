@@ -1,9 +1,8 @@
 package logic;
 
 import io.DatabaseConnector;
-import model.Currency;
-import model.CurrencyList;
-import model.CurrencyTable;
+import model.CurrencyCol;
+import model.CurrencyRow;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -13,36 +12,49 @@ public class DatabaseControl {
     DatabaseLogic databaseLogic = new DatabaseLogic();
     DatabaseConnector databaseConnector = new DatabaseConnector();
 
-    public void insertCurrencyTable(CurrencyTable currencyTable) throws SQLException {
+    public void insertCurrencyRow(CurrencyRow currencyRow) throws SQLException {
         databaseConnector.openConnection();
-        databaseLogic.insertCurrencyTable(databaseConnector,currencyTable);
-        databaseConnector.openConnection();
+        databaseLogic.insertCurrencyRow(databaseConnector, currencyRow);
+        databaseConnector.closeConnection();
     }
 
-    public void deleteCurrencyTables(LocalDate date) throws SQLException {
+    public void insertCurrencyRows(ArrayList<CurrencyRow> currencyRows) throws SQLException {
         databaseConnector.openConnection();
-        databaseLogic.deleteCurrencyTable(databaseConnector,date);
-        databaseConnector.openConnection();
+        for (int i = 0; i < currencyRows.size(); i++) {
+            databaseLogic.insertCurrencyRow(databaseConnector, currencyRows.get(i));
+        }
+        databaseConnector.closeConnection();
     }
 
-    public CurrencyList readCurrencyList(String tableName, LocalDate date_from, LocalDate date_to) throws SQLException {
-        CurrencyList currencyList = new CurrencyList();
+    public void deleteCurrencyRow(LocalDate date) throws SQLException {
         databaseConnector.openConnection();
-        currencyList = databaseLogic.readCurrencyList(databaseConnector,tableName,date_from,date_to);
+        databaseLogic.deleteCurrencyRow(databaseConnector, date);
+        databaseConnector.closeConnection();
+    }
+
+    public void deleteCurrencyRows(LocalDate date_from, LocalDate date_to) throws SQLException {
+        databaseConnector.openConnection();
+        databaseLogic.deleteCurrencyRows(databaseConnector, date_from, date_to);
+        databaseConnector.closeConnection();
+    }
+
+    public CurrencyCol readCurrencyColByDate(String code, LocalDate date_from, LocalDate date_to) throws SQLException {
+        CurrencyCol currencyCol = new CurrencyCol();
+        databaseConnector.openConnection();
+        currencyCol = databaseLogic.readCurrencyColByDate(databaseConnector, code, date_from, date_to);
         databaseConnector.closeConnection();
 
-        return currencyList;
+        return currencyCol;
     }
 
-    public ArrayList<CurrencyList> readCurrenciesLists(ArrayList<String> currenciesTableNames, LocalDate date_from, LocalDate date_to) throws SQLException {
-        ArrayList<CurrencyList> arrayListOfCurrencyList;
+    public ArrayList<CurrencyCol> readCurrencyCols(ArrayList<String> codes, LocalDate date_from, LocalDate date_to) throws SQLException {
         databaseConnector.openConnection();
-        arrayListOfCurrencyList = databaseLogic.readArrayListOfCurrencyList(databaseConnector,currenciesTableNames,date_from,date_to);
-        databaseConnector.openConnection();
-        return arrayListOfCurrencyList;
+        ArrayList<CurrencyCol> arrayListOfCurrencyCol = databaseLogic.readCurrencyColsByDate(databaseConnector, codes, date_from, date_to);
+        databaseConnector.closeConnection();
+        return arrayListOfCurrencyCol;
     }
 
-    public void close(){
+    public void close() {
         databaseLogic.close(databaseConnector);
     }
 

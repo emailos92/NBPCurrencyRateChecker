@@ -1,9 +1,7 @@
 package logic;
 
 import io.DatabaseConnector;
-import model.Currency;
-import model.CurrencyList;
-import model.CurrencyTable;
+import model.*;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,136 +12,143 @@ import java.util.ArrayList;
 
 public class DatabaseLogic {
 
-    CurrencyLogic currencyLogic = new CurrencyLogic();
+//    public void singleInsert(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, ArrayList<String> columnsValues) throws SQLException {
+//        if (db.getConnectionState()) {
+//            PreparedStatement preparedStatement = db.getConnection().prepareStatement("insert into " + tableName + "(" + columnsNames + ") values (" + columnsValues + ")");
+//            preparedStatement.executeUpdate();
+//        } else {
+//            throw new SQLException("Open database connection first");
+//        }
+//    }
+//
+//    public void singleUpdate(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, ArrayList<String> columnsValues, int id) throws SQLException {
+//        if (db.getConnectionState()) {
+//            String updateString = new String();
+//            for (int i = 0; i < columnsNames.size(); i++) {
+//                updateString += columnsNames.get(i) + "=" + "'" + columnsValues.get(i) + "'";
+//                if (i != (columnsNames.size() - 1)) {
+//                    updateString += ", ";
+//                }
+//            }
+//            PreparedStatement preparedStatement = db.getConnection().prepareStatement("update " + tableName + " set " + updateString + " where id=" + id);
+//            preparedStatement.executeUpdate();
+//        } else {
+//            throw new SQLException("Open database connection first");
+//        }
+//    }
+//
+//    public void singleDelete(DatabaseConnector db, String tableName, int id) throws SQLException {
+//        if (db.getConnectionState()) {
+//            PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from " + tableName + " where id=" + id);
+//            preparedStatement.executeUpdate();
+//        } else {
+//            throw new SQLException("Open database connection first");
+//        }
+//
+//    }
+//
+//    public ResultSet singleRead(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, int id) throws SQLException {
+//        if (db.getConnectionState()) {
+//            String columnsString = new String();
+//            for (int i = 0; i < columnsNames.size(); i++) {
+//                columnsString += columnsNames.get(i);
+//                if (i != (columnsNames.size() - 1)) {
+//                    columnsString += ", ";
+//                }
+//            }
+//            PreparedStatement preparedStatement = db.getConnection().prepareStatement("select " + columnsString + " from " + tableName + " where id=" + id);
+//            return preparedStatement.executeQuery();
+//        } else {
+//            throw new SQLException("Open database connection first");
+//        }
+//    }
 
-    public void singleInsert(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, ArrayList<String> columnsValues) throws SQLException {
-        if (db.getConnectionState()) {
-            PreparedStatement preparedStatement = db.getConnection().prepareStatement("insert into " + tableName + "(" + columnsNames + ") values (" + columnsValues + ")");
-            preparedStatement.executeUpdate();
-        } else {
-            throw new SQLException("Open database connection first");
-        }
-    }
-
-    public void singleUpdate(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, ArrayList<String> columnsValues, int id) throws SQLException {
-        if (db.getConnectionState()) {
-            String updateString = new String();
-            for (int i = 0; i < columnsNames.size(); i++) {
-                updateString += columnsNames.get(i) + "=" + "'" + columnsValues.get(i) + "'";
-                if (i != (columnsNames.size() - 1)) {
-                    updateString += ", ";
-                }
-            }
-            PreparedStatement preparedStatement = db.getConnection().prepareStatement("update " + tableName + " set " + updateString + " where id=" + id);
-            preparedStatement.executeUpdate();
-        } else {
-            throw new SQLException("Open database connection first");
-        }
-    }
-
-    public void singleDelete(DatabaseConnector db, String tableName, int id) throws SQLException {
-        if (db.getConnectionState()) {
-            PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from " + tableName + " where id=" + id);
-            preparedStatement.executeUpdate();
-        } else {
-            throw new SQLException("Open database connection first");
-        }
-
-    }
-
-    public ResultSet singleRead(DatabaseConnector db, String tableName, ArrayList<String> columnsNames, int id) throws SQLException {
-        if (db.getConnectionState()) {
-            String columnsString = new String();
-            for (int i = 0; i < columnsNames.size(); i++) {
-                columnsString += columnsNames.get(i);
-                if (i != (columnsNames.size() - 1)) {
-                    columnsString += ", ";
-                }
-            }
-            PreparedStatement preparedStatement = db.getConnection().prepareStatement("select " + columnsString + " from " + tableName + " where id=" + id);
-            return preparedStatement.executeQuery();
-        } else {
-            throw new SQLException("Open database connection first");
-        }
-    }
-
-    private void insertCurrency(DatabaseConnector db, Currency currency, LocalDate date) throws SQLException {
-        String tableName = currencyLogic.getCurrencySqlTableName(currency.getCode());
-        String query = new String();
-        query = "insert into " + tableName + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + currency.getExchangeRate() + ")";
-        System.out.println(query);
+    private void insertCurrencyRowElem(DatabaseConnector db, CurrencyRowElem currencyRowElem, LocalDate date) throws SQLException {
+        String tableName = CurrencyLogic.getCurrencySqlTableName(currencyRowElem.getCode());
+        String query = "insert into " + tableName + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + currencyRowElem.getExchangeRate() + ")";
+        //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         preparedStatement.executeUpdate();
     }
 
-    private void insertTable(DatabaseConnector db, String uniqueName, LocalDate date) throws SQLException {
-        String query = new String();
-        query = "insert into tables (date, uniquename) values ('" + Date.valueOf(date) + "', '" + uniqueName + "')";
-        System.out.println(query);
+    private void insertRowTableElem(DatabaseConnector db, String name, LocalDate date) throws SQLException {
+        String query = "insert into tables (date, uniquename) values ('" + Date.valueOf(date) + "', '" + name + "')";
+        //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         preparedStatement.executeUpdate();
     }
 
-    public void insertCurrencyTable(DatabaseConnector db, CurrencyTable currency_table) throws SQLException {
-        insertTable(db, currency_table.getUniqueTableName(), currency_table.getDateOfTable());
-        while (currency_table.isEmpty() == false) {
-            insertCurrency(db, currency_table.getCurrency(), currency_table.getDateOfTable());
+    public void insertCurrencyRow(DatabaseConnector db, CurrencyRow currencyRow) throws SQLException {
+        insertRowTableElem(db, currencyRow.getName(), currencyRow.getDate());
+        for (int i = 0; i < currencyRow.size(); i++) {
+            insertCurrencyRowElem(db, currencyRow.get(i), currencyRow.getDate());
         }
     }
 
-    public void deleteCurrencyTable(DatabaseConnector db, LocalDate date) throws SQLException {
+    public void deleteCurrencyRow(DatabaseConnector db, LocalDate date) throws SQLException {
         //here we have foreign key 'data' and need to remove only in 'tables', others will automatically delete "on delete cascade"
         PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from tables where date='" + Date.valueOf(date) + "'");
         preparedStatement.executeUpdate();
     }
 
-    public CurrencyList readCurrencyList(DatabaseConnector db, String tableName, LocalDate date_from, LocalDate date_to) throws SQLException {
-        String query = new String();
-        CurrencyList currencyList = new CurrencyList();
-        query = "select * from " + tableName + " where date >= '" + Date.valueOf(date_from) + "' and date <= '" + Date.valueOf(date_to) + "'";
-        //System.out.println(query);
+    public void deleteCurrencyRows(DatabaseConnector db, LocalDate date_from, LocalDate date_to) throws SQLException {
+        //here we have foreign key 'data' and need to remove only in 'tables', others will automatically delete "on delete cascade"
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from tables where date>='" + Date.valueOf(date_from) + "' and date<='" + Date.valueOf(date_to) + "'");
+        preparedStatement.executeUpdate();
+    }
 
-        PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
+    public CurrencyCol readCurrencyCol(DatabaseConnector db, String code) throws SQLException {
+        CurrencyCol currencyCol = new CurrencyCol();
+        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
+
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement("select * from " + tableName);
         ResultSet result = preparedStatement.executeQuery();
-
-        currencyList.setCurrencyCode(currencyLogic.getCurrencyCode(tableName));
         while (result.next()) {
             LocalDate date = result.getDate("date").toLocalDate();
             double exchangeRate = result.getDouble("exchangerate");
             //System.out.println(date + "\t" + exchangeRate);
-            currencyList.addToCurrencyList(date,exchangeRate);
-        }
-        //System.out.println(currencyList.getInfo());
-
-        return currencyList;
-    }
-
-    public ArrayList<CurrencyList> readArrayListOfCurrencyList(DatabaseConnector db, ArrayList<String> currenciesTableNames, LocalDate date_from, LocalDate date_to) throws SQLException {
-        ArrayList<CurrencyList> arrayListOfCurrencyList = new ArrayList<>();
-        for (int i = 0; i < currenciesTableNames.size(); i++) {
-            arrayListOfCurrencyList.add(readCurrencyList(db,currenciesTableNames.get(0),date_from,date_to));
+            currencyCol.add(new CurrencyColElem(date, exchangeRate));
         }
 
-        return arrayListOfCurrencyList;
+        return currencyCol;
     }
 
+    public ArrayList<CurrencyCol> readCurrencyCols(DatabaseConnector db, ArrayList<String> codes) throws SQLException {
+        ArrayList<CurrencyCol> arrayListOfCurrencyCol = new ArrayList<>();
+        for (int i = 0; i < codes.size(); i++) {
+            arrayListOfCurrencyCol.add(readCurrencyCol(db, codes.get(0)));
+        }
 
-//
-//    public CurrencyList readCurrency() {
-//
-//    }
-//
-//    public ArrayList<Currency> readCurrencies() {
-//
-//    }
+        return arrayListOfCurrencyCol;
+    }
 
-//    public CurrencyList readCurrencies(LocalDate data_from, LocalDate data_to, String currency_code){
-//
-//    }
-//
-//    public ArrayList<CurrencyList> readCurrencies(LocalDate data_from, LocalDate data_to, ArrayList<String> currencies_codes){
-//
-//    }
+    public CurrencyCol readCurrencyColByDate(DatabaseConnector db, String code, LocalDate date_from, LocalDate date_to) throws SQLException {
+        CurrencyCol currencyCol = new CurrencyCol();
+        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
+        String query = "select * from " + tableName + " where date >= '" + Date.valueOf(date_from) + "' and date <= '" + Date.valueOf(date_to) + "'";
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
+        ResultSet result = preparedStatement.executeQuery();
+
+        currencyCol.setCode(code);
+        while (result.next()) {
+            LocalDate date = result.getDate("date").toLocalDate();
+            double exchangeRate = result.getDouble("exchangerate");
+            //System.out.println(date + "\t" + exchangeRate);
+            currencyCol.add(new CurrencyColElem(date, exchangeRate));
+        }
+        //System.out.println(currencyCol.getInfo());
+
+        return currencyCol;
+    }
+
+    public ArrayList<CurrencyCol> readCurrencyColsByDate(DatabaseConnector db, ArrayList<String> arrayOfCurrencyCode, LocalDate date_from, LocalDate date_to) throws SQLException {
+        ArrayList<CurrencyCol> arrayListOfCurrencyCol = new ArrayList<>();
+        for (int i = 0; i < arrayOfCurrencyCode.size(); i++) {
+            arrayListOfCurrencyCol.add(readCurrencyColByDate(db, arrayOfCurrencyCode.get(0), date_from, date_to));
+        }
+
+        return arrayListOfCurrencyCol;
+    }
 
     public void close(DatabaseConnector db) {
         db.closeConnection();
