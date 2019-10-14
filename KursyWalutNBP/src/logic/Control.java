@@ -2,7 +2,6 @@ package logic;
 
 import gui.JChartTest;
 import io.DataReader;
-import model.Currencies;
 import model.CurrencyCol;
 import model.CurrencyColElem;
 import model.CurrencyRow;
