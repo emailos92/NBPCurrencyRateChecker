@@ -2,9 +2,12 @@ package logic;
 
 import gui.JChartTest;
 import io.DataReader;
+import io.ExcelReader;
 import model.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class Control {
 
     // zmienna do komunikacji z użytkownikiem
     private DataReader dataReader = new DataReader();
+    private ExcelReader excelReader = new ExcelReader();
     private WebsiteControl websiteControl = new WebsiteControl();
     private DatabaseControl databaseControl = new DatabaseControl();
     private Currencies currencies = new Currencies();
@@ -61,8 +65,21 @@ public class Control {
                     break;
 
                 case GET_FROM_FILE:
-                    System.out.println("GET_FROM_FILE - not supported yet");
                     currencies.clear();
+
+                    try {
+                        File temp = new File("test"); //File.createTempFile("i-am-a-temp-file", ".tmp");
+                        String absolutePath = temp.getAbsolutePath();
+                        //System.out.println("File path : " + absolutePath);
+                        String filePath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+                        filePath = absolutePath.substring(0, filePath.lastIndexOf(File.separator));
+                        filePath += "/Archiwum/test.xls";
+                        System.out.println("File path : " + filePath);
+                        excelReader.parseExcel(filePath);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
                     break;
 
                 case GET_FROM_DATABASE:
