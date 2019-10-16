@@ -9,7 +9,6 @@ public class CurrencyRow {
 
     private ArrayList<CurrencyRowElem> currencyRowElemArray;
     private LocalDate date;
-    private String name;
 
     public CurrencyRow() {
         currencyRowElemArray = new ArrayList<>();
@@ -18,7 +17,6 @@ public class CurrencyRow {
     public CurrencyRow(LocalDate date, String name) {
         currencyRowElemArray = new ArrayList<>();
         this.date = date;
-        this.name = name;
     }
 
     public LocalDate getDate() {
@@ -27,14 +25,6 @@ public class CurrencyRow {
 
     public void setDate(LocalDate date) {
         this.date = date;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void add(CurrencyRowElem currencyRowElem) {

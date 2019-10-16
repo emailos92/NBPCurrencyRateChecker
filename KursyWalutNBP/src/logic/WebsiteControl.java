@@ -42,10 +42,6 @@ public class WebsiteControl {
             throw new IllegalArgumentException("Wrong input data (unique table name of currencies rate)");
         }
 
-        //set name
-        String name = getUniqueTableIdFromString(input);
-        currencyRow.setName(name);
-
         //set date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(getDateOfTableIdFromString(input), formatter);

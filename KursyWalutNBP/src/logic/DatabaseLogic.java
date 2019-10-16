@@ -63,27 +63,42 @@ public class DatabaseLogic {
 //        }
 //    }
 
-    private void insertCurrencyRowElem(DatabaseConnector db, CurrencyRowElem currencyRowElem, LocalDate date) throws SQLException {
-        String tableName = CurrencyLogic.getCurrencySqlTableName(currencyRowElem.getCode());
-        String query = "insert into " + tableName + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + currencyRowElem.getExchangeRate() + ")";
+    private void insertTableElem(DatabaseConnector db, LocalDate date) throws SQLException {
+        //first check we have table with this date in sql ;) create if not
+
+        String query = "insert into tables (date) values ('" + Date.valueOf(date) + "')";
         //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         preparedStatement.executeUpdate();
     }
 
-    private void insertRowTableElem(DatabaseConnector db, String name, LocalDate date) throws SQLException {
-        String query = "insert into tables (date, uniquename) values ('" + Date.valueOf(date) + "', '" + name + "')";
+    private void insertCurrencyElem(DatabaseConnector db, String code, double exchangeRate, LocalDate date) throws SQLException {
+        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
+        String query = "insert into " + tableName + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + exchangeRate + ")";
         //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         preparedStatement.executeUpdate();
     }
 
     public void insertCurrencyRow(DatabaseConnector db, CurrencyRow currencyRow) throws SQLException {
-        insertRowTableElem(db, currencyRow.getName(), currencyRow.getDate());
+        insertTableElem(db, currencyRow.getDate());
         for (int i = 0; i < currencyRow.size(); i++) {
-            insertCurrencyRowElem(db, currencyRow.get(i), currencyRow.getDate());
+            insertCurrencyElem(db, currencyRow.get(i).getCode(), currencyRow.get(i).getExchangeRate(), currencyRow.getDate());
         }
     }
+
+    public void insertTableCol(DatabaseConnector db, CurrencyCol currencyCol) throws SQLException {
+        for (int i = 0; i < currencyCol.size(); i++) {
+            insertTableElem(db, currencyCol.get(i).getDate());
+        }
+    }
+
+    public void insertCurrencyCol(DatabaseConnector db, CurrencyCol currencyCol) throws SQLException {
+        for (int i = 0; i < currencyCol.size(); i++) {
+            insertCurrencyElem(db, currencyCol.getCode(), currencyCol.get(i).getExchangeRate(), currencyCol.get(i).getDate());
+        }
+    }
+
 
     public void deleteCurrencyRow(DatabaseConnector db, LocalDate date) throws SQLException {
         //here we have foreign key 'data' and need to remove only in 'tables', others will automatically delete "on delete cascade"
@@ -104,6 +119,7 @@ public class DatabaseLogic {
         PreparedStatement preparedStatement = db.getConnection().prepareStatement("select * from " + tableName);
         ResultSet result = preparedStatement.executeQuery();
         while (result.next()) {
+            String name = result.getString("uniquename");
             LocalDate date = result.getDate("date").toLocalDate();
             double exchangeRate = result.getDouble("exchangerate");
             //System.out.println(date + "\t" + exchangeRate);
@@ -113,7 +129,7 @@ public class DatabaseLogic {
         return currencyCol;
     }
 
-    public CurrencyCols readCurrencyCols(DatabaseConnector db,CurrencyCodes codes) throws SQLException {
+    public CurrencyCols readCurrencyCols(DatabaseConnector db, CurrencyCodes codes) throws SQLException {
         CurrencyCols cols = new CurrencyCols();
         for (int i = 0; i < codes.getSelectedCodes().size(); i++) {
             cols.add(readCurrencyCol(db, codes.getSelectedCodes().get(i)));

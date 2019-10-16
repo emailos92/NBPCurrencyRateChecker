@@ -25,6 +25,17 @@ public class DatabaseControl {
         databaseConnector.closeConnection();
     }
 
+    public void insertCurrencyCols(CurrencyCols cols) throws SQLException {
+        databaseConnector.openConnection();
+        for (int i = 0; i < cols.size(); i++) {
+            if(i==0){
+                databaseLogic.insertTableCol(databaseConnector, cols.get(i));
+            }
+            databaseLogic.insertCurrencyCol(databaseConnector, cols.get(i));
+        }
+        databaseConnector.closeConnection();
+    }
+
     public void deleteCurrencyRow(LocalDate date) throws SQLException {
         databaseConnector.openConnection();
         databaseLogic.deleteCurrencyRow(databaseConnector, date);

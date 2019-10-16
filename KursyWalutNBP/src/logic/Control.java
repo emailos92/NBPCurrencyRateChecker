@@ -20,9 +20,10 @@ public class Control {
     private final static int PUT_TO_FILE = 5;
     private final static int PUT_TO_DATABASE = 6;
     private final static int DELETE_FROM_DATABASE = 7;
-    private final static int SELECT_CURRENCY = 8;
-    private final static int SELECT_DATE = 9;
-    private final static int SHOW = 10;
+    private final static int SELECT_SHOW = 8;
+    private final static int SELECT_CURRENCY = 9;
+    private final static int SELECT_DATE = 10;
+    private final static int SHOW = 11;
 
     // zmienna do komunikacji z użytkownikiem
     private DataReader dataReader = new DataReader();
@@ -38,19 +39,15 @@ public class Control {
     public void controlLoop() {
         int option;
 
-        //Currencies currencies = new Currencies();
-        //ArrayList<CurrencyRow> currencyRows = new ArrayList<CurrencyRow>();
-        //ArrayList<CurrencyCol> currencyCols = new ArrayList<CurrencyCol>();
-        //ArrayList<String> currenciesCodes = new ArrayList<String>();
-        //LocalDate date_from = LocalDate.now().minusMonths(3);
-        //LocalDate date_to = LocalDate.now();
-
         do {
 
             printOptions();
             option = dataReader.getInt();
             switch (option) {
-
+                case EXIT:
+                    System.out.println("Pa Pa :)");
+                    exit();
+                    break;
                 case GET_FROM_WEBSITE:
                     System.out.println("GET_FROM_WEBSITE");
                     currencies.clear();
@@ -87,9 +84,6 @@ public class Control {
                     System.out.println("GET_RANDOM");
                     currencies.clear();
 
-                    System.out.println(dates.toString());
-                    System.out.println(codes.toString());
-
                     currencies.setCols(createTestArrays(codes.getSelectedCodes(), dates.getFrom(), dates.getTo()));
                     for (int i = 0; i < currencies.getCols().size(); i++) {
                         System.out.println(currencies.getCols().get(i).toString());
@@ -104,9 +98,8 @@ public class Control {
                 case PUT_TO_DATABASE:
                     System.out.println("PUT_TO_DATABASE");
                     try {
-                        for (int i = 0; i < currencies.getRows().size(); i++) {
-                            databaseControl.insertCurrencyRow(currencies.getRows().get(i));
-                        }
+                        databaseControl.insertCurrencyRows(currencies.getRows());
+                        databaseControl.insertCurrencyCols(currencies.getCols());
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
@@ -122,8 +115,14 @@ public class Control {
 
                     break;
 
+                case SELECT_SHOW:
+                    System.out.println(dates.toString());
+                    System.out.println(codes.toString());
+                    break;
+
                 case SELECT_CURRENCY:
                     System.out.println("Wybierz kody walut");
+                    //warning, poprawic dataReader.getCodes
                     dataReader.getCodes(codes.getSelectedCodes());
                     break;
 
@@ -194,6 +193,7 @@ public class Control {
         System.out.println(PUT_TO_FILE + " - PUT_TO_FILE");
         System.out.println(PUT_TO_DATABASE + " - PUT_TO_DATABASE");
         System.out.println(DELETE_FROM_DATABASE + " - DELETE_FROM_DATABASE");
+        System.out.println(SELECT_SHOW + " - SELECT_SHOW");
         System.out.println(SELECT_CURRENCY + " - SELECT_CURRENCY");
         System.out.println(SELECT_DATE + " - SELECT_DATE");
         System.out.println(SHOW + " - SHOW");
