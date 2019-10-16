@@ -1,8 +1,7 @@
 package logic;
 
 import io.DatabaseConnector;
-import model.CurrencyCol;
-import model.CurrencyRow;
+import model.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -18,10 +17,10 @@ public class DatabaseControl {
         databaseConnector.closeConnection();
     }
 
-    public void insertCurrencyRows(ArrayList<CurrencyRow> currencyRows) throws SQLException {
+    public void insertCurrencyRows(CurrencyRows rows) throws SQLException {
         databaseConnector.openConnection();
-        for (int i = 0; i < currencyRows.size(); i++) {
-            databaseLogic.insertCurrencyRow(databaseConnector, currencyRows.get(i));
+        for (int i = 0; i < rows.size(); i++) {
+            databaseLogic.insertCurrencyRow(databaseConnector, rows.get(i));
         }
         databaseConnector.closeConnection();
     }
@@ -32,26 +31,26 @@ public class DatabaseControl {
         databaseConnector.closeConnection();
     }
 
-    public void deleteCurrencyRows(LocalDate date_from, LocalDate date_to) throws SQLException {
+    public void deleteCurrencyRows(CurrencyDates dates) throws SQLException {
         databaseConnector.openConnection();
-        databaseLogic.deleteCurrencyRows(databaseConnector, date_from, date_to);
+        databaseLogic.deleteCurrencyRows(databaseConnector, dates);
         databaseConnector.closeConnection();
     }
 
-    public CurrencyCol readCurrencyColByDate(String code, LocalDate date_from, LocalDate date_to) throws SQLException {
+    public CurrencyCol readCurrencyColByDate(String code, CurrencyDates dates) throws SQLException {
         CurrencyCol currencyCol = new CurrencyCol();
         databaseConnector.openConnection();
-        currencyCol = databaseLogic.readCurrencyColByDate(databaseConnector, code, date_from, date_to);
+        currencyCol = databaseLogic.readCurrencyColByDate(databaseConnector, code, dates);
         databaseConnector.closeConnection();
 
         return currencyCol;
     }
 
-    public ArrayList<CurrencyCol> readCurrencyCols(ArrayList<String> codes, LocalDate date_from, LocalDate date_to) throws SQLException {
+    public CurrencyCols readCurrencyCols(CurrencyCodes codes, CurrencyDates dates) throws SQLException {
         databaseConnector.openConnection();
-        ArrayList<CurrencyCol> arrayListOfCurrencyCol = databaseLogic.readCurrencyColsByDate(databaseConnector, codes, date_from, date_to);
+        CurrencyCols cols = databaseLogic.readCurrencyColsByDate(databaseConnector, codes, dates);
         databaseConnector.closeConnection();
-        return arrayListOfCurrencyCol;
+        return cols;
     }
 
     public void close() {

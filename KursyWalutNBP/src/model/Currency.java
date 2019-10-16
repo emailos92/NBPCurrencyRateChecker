@@ -19,7 +19,7 @@ public class Currency {
         this.exchangeRate = exchangeRate;
     }
 
-    public String getInfo(){
+    public String toString(){
         return String.valueOf(exchangeRate);
     }
 }

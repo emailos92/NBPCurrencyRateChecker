@@ -65,7 +65,7 @@ public class WebsiteControl {
 
         //System.out.println("Pobrano tabele " + name + " + z dnia " + date);
 
-        System.out.println(currencyRow.getInfo());
+        System.out.println(currencyRow.toString());
 
 //        Elements allH1 = document.select("p");
 //        for (Element elem : allH1) {

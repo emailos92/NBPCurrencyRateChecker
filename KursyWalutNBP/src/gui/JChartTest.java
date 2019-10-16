@@ -1,7 +1,6 @@
 package gui;
 
 import model.CurrencyCol;
-import model.CurrencyColElem;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -13,7 +12,6 @@ import org.jfree.data.xy.XYDataset;
 import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class JChartTest {
 

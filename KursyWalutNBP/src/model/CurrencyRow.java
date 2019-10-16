@@ -2,13 +2,24 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 public class CurrencyRow {
 
-    private ArrayList<CurrencyRowElem> currencyRowElems = new ArrayList<CurrencyRowElem>();
+    private ArrayList<CurrencyRowElem> currencyRowElemArray;
     private LocalDate date;
     private String name;
+
+    public CurrencyRow() {
+        currencyRowElemArray = new ArrayList<>();
+    }
+
+    public CurrencyRow(LocalDate date, String name) {
+        currencyRowElemArray = new ArrayList<>();
+        this.date = date;
+        this.name = name;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -26,43 +37,55 @@ public class CurrencyRow {
         this.name = name;
     }
 
-    public void add(CurrencyRowElem currencyRowElem){
-        currencyRowElems.add(currencyRowElem);
+    public void add(CurrencyRowElem currencyRowElem) {
+        currencyRowElemArray.add(currencyRowElem);
     }
 
-    public void clear(){
-        currencyRowElems.clear();
+    public void clear() {
+        currencyRowElemArray.clear();
     }
 
     public CurrencyRowElem get(int i) {
-        if (currencyRowElems.size() > i) {
-            return currencyRowElems.get(i);
+        if (i >= 0 && i < currencyRowElemArray.size()) {
+            return currencyRowElemArray.get(i);
         } else {
-            throw new NoSuchElementException("CurrencyRow wrong index (" + i + ")");
+            throw new NoSuchElementException("CurrencyRow.get(index) wrong index (" + i + ")");
         }
     }
 
     public CurrencyRowElem getNextAndDelete() {
-        if (currencyRowElems.size() > 0) {
-            CurrencyRowElem currencyRowElem = currencyRowElems.get(0);
-            currencyRowElems.remove(0);
+        if (currencyRowElemArray.size() > 0) {
+            CurrencyRowElem currencyRowElem = currencyRowElemArray.get(0);
+            currencyRowElemArray.remove(0);
             return currencyRowElem;
         } else {
-            throw new NoSuchElementException("CurrencyRow is empty!");
+            throw new NoSuchElementException("CurrencyRow are empty!");
         }
     }
 
-    public int size(){
-        return currencyRowElems.size();
+    public void remove(int i) {
+        if (i >= 0 && i < currencyRowElemArray.size()) {
+            currencyRowElemArray.remove(i);
+        } else {
+            throw new NoSuchElementException("CurrencyRow.remove(index) wrong index (" + i + ")");
+        }
     }
 
-    public String getInfo() {
-        String info = new String();
-        info += date + "(" + currencyRowElems.size() + ")\n";
-        for (int i = 0; i < currencyRowElems.size(); i++) {
-            info += currencyRowElems.get(i).getInfo() + "\n";
+    public int size() {
+        return currencyRowElemArray.size();
+    }
+
+    public void sort() {
+        currencyRowElemArray.sort(Comparator.comparing(CurrencyRowElem::getCode));
+    }
+
+    public String toString() {
+        String string = new String();
+        string += date + "(" + currencyRowElemArray.size() + ")\n";
+        for (int i = 0; i < currencyRowElemArray.size(); i++) {
+            string += currencyRowElemArray.get(i).toString() + "\n";
         }
-        return info;
+        return string;
     }
 
 }

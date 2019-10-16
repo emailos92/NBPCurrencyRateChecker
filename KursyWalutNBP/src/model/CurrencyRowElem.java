@@ -21,7 +21,7 @@ public class CurrencyRowElem extends Currency {
         this.code = code;
     }
 
-    public String getInfo(){
-        return code + " : " + super.getInfo();
+    public String toString(){
+        return code + " : " + super.toString();
     }
 }

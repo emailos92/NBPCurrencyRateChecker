@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class ViewCodes {
+public class CurrencyCodes {
 
     private final static String[] CURRENCIES_CODES = new String[]{
             "1 THB", "1 USD", "1 AUD", "1 HKD", "1 CAD", "1 NZD", "1 SGD", "1 EUR",
@@ -34,6 +34,11 @@ public class ViewCodes {
 
     private boolean[] currencyCodes = new boolean[CURRENCIES_CODES.length];
 
+    public CurrencyCodes() {
+        currencyCodes[1] = true;    //USB
+        currencyCodes[7] = true;    //EUR
+        currencyCodes[10] = true;   //GBP
+    }
 
     public ArrayList<String> getSelectedCodes() {
         ArrayList<String> codes = new ArrayList<>();
@@ -128,7 +133,7 @@ public class ViewCodes {
         }
     }
 
-    public String getInfo(){
+    public String toString(){
         String info = new String();
         for(int i =0;i<CURRENCIES_CODES.length;i++){
             if(currencyCodes[i]){

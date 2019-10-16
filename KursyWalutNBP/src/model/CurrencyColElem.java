@@ -23,7 +23,7 @@ public class CurrencyColElem extends Currency {
         this.date = date;
     }
 
-    public String getInfo(){
-        return date + " : " + super.getInfo();
+    public String toString(){
+        return date + " : " + super.toString();
     }
 }

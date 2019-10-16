@@ -2,13 +2,13 @@ package model;
 
 import java.time.LocalDate;
 
-public class ViewDates {
+public class CurrencyDates {
 
     LocalDate from;
     LocalDate to;
 
     //default last three months
-    public ViewDates(){
+    public CurrencyDates(){
         this.from = LocalDate.now().minusMonths(3);
         this.to = LocalDate.now();
     }
@@ -49,10 +49,7 @@ public class ViewDates {
         to = LocalDate.now();
     }
 
-    public String getInfo(){
-        String info = new String();
-        info = "Wybrany zakres dat: od " + from + " do " + to;
-
-        return info;
+    public String toString(){
+        return from + " : " + to;
     }
 }

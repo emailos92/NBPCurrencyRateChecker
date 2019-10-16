@@ -91,9 +91,9 @@ public class DatabaseLogic {
         preparedStatement.executeUpdate();
     }
 
-    public void deleteCurrencyRows(DatabaseConnector db, LocalDate date_from, LocalDate date_to) throws SQLException {
+    public void deleteCurrencyRows(DatabaseConnector db, CurrencyDates dates) throws SQLException {
         //here we have foreign key 'data' and need to remove only in 'tables', others will automatically delete "on delete cascade"
-        PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from tables where date>='" + Date.valueOf(date_from) + "' and date<='" + Date.valueOf(date_to) + "'");
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from tables where date>='" + Date.valueOf(dates.getFrom()) + "' and date<='" + Date.valueOf(dates.getTo()) + "'");
         preparedStatement.executeUpdate();
     }
 
@@ -113,19 +113,19 @@ public class DatabaseLogic {
         return currencyCol;
     }
 
-    public ArrayList<CurrencyCol> readCurrencyCols(DatabaseConnector db, ArrayList<String> codes) throws SQLException {
-        ArrayList<CurrencyCol> arrayListOfCurrencyCol = new ArrayList<>();
-        for (int i = 0; i < codes.size(); i++) {
-            arrayListOfCurrencyCol.add(readCurrencyCol(db, codes.get(0)));
+    public CurrencyCols readCurrencyCols(DatabaseConnector db,CurrencyCodes codes) throws SQLException {
+        CurrencyCols cols = new CurrencyCols();
+        for (int i = 0; i < codes.getSelectedCodes().size(); i++) {
+            cols.add(readCurrencyCol(db, codes.getSelectedCodes().get(i)));
         }
 
-        return arrayListOfCurrencyCol;
+        return cols;
     }
 
-    public CurrencyCol readCurrencyColByDate(DatabaseConnector db, String code, LocalDate date_from, LocalDate date_to) throws SQLException {
+    public CurrencyCol readCurrencyColByDate(DatabaseConnector db, String code, CurrencyDates dates) throws SQLException {
         CurrencyCol currencyCol = new CurrencyCol();
         String tableName = CurrencyLogic.getCurrencySqlTableName(code);
-        String query = "select * from " + tableName + " where date >= '" + Date.valueOf(date_from) + "' and date <= '" + Date.valueOf(date_to) + "'";
+        String query = "select * from " + tableName + " where date >= '" + Date.valueOf(dates.getFrom()) + "' and date <= '" + Date.valueOf(dates.getTo()) + "'";
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         ResultSet result = preparedStatement.executeQuery();
 
@@ -141,13 +141,13 @@ public class DatabaseLogic {
         return currencyCol;
     }
 
-    public ArrayList<CurrencyCol> readCurrencyColsByDate(DatabaseConnector db, ArrayList<String> arrayOfCurrencyCode, LocalDate date_from, LocalDate date_to) throws SQLException {
-        ArrayList<CurrencyCol> arrayListOfCurrencyCol = new ArrayList<>();
-        for (int i = 0; i < arrayOfCurrencyCode.size(); i++) {
-            arrayListOfCurrencyCol.add(readCurrencyColByDate(db, arrayOfCurrencyCode.get(0), date_from, date_to));
+    public CurrencyCols readCurrencyColsByDate(DatabaseConnector db, CurrencyCodes codes, CurrencyDates dates) throws SQLException {
+        CurrencyCols cols = new CurrencyCols();
+        for (int i = 0; i < codes.getSelectedCodes().size(); i++) {
+            cols.add(readCurrencyColByDate(db, codes.getSelectedCodes().get(i), dates));
         }
 
-        return arrayListOfCurrencyCol;
+        return cols;
     }
 
     public void close(DatabaseConnector db) {
