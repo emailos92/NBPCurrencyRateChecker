@@ -3,6 +3,7 @@ package logic;
 import gui.JChartTest;
 import io.DataReader;
 import io.ExcelReader;
+import io.WebsiteReader;
 import model.*;
 
 import java.io.File;
@@ -24,22 +25,33 @@ public class Control {
     private final static int PUT_TO_DATABASE = 6;
     private final static int DELETE_FROM_DATABASE = 7;
     private final static int SELECT_SHOW = 8;
-    private final static int SELECT_CURRENCY = 9;
-    private final static int SELECT_DATE = 10;
+    private final static int SELECT_CURRENCIES = 9;
+    private final static int SELECT_DATES = 10;
     private final static int SHOW = 11;
 
-    // zmienna do komunikacji z użytkownikiem
+    // zmienne do komunikacji z użytkownikiem
     private DataReader dataReader = new DataReader();
     private ExcelReader excelReader = new ExcelReader();
-    private WebsiteControl websiteControl = new WebsiteControl();
+    private WebsiteReader websiteReader = new WebsiteReader();
     private DatabaseControl databaseControl = new DatabaseControl();
+
+    // lokalne dane aplikacji
     private Currencies currencies = new Currencies();
-    private CurrencyDates dates = new CurrencyDates();
-    private CurrencyCodes codes = new CurrencyCodes();
+
+    private LocalDate dateFrom = LocalDate.now().minusMonths(3);
+    private LocalDate dateTo = LocalDate.now();
+
+    // dane widoku / zaznaczenia
+    private CurrencyDates selectedDates = new CurrencyDates();
+    private CurrencyCodes selectedCodes = new CurrencyCodes(CurrencyStatics.getCurrenciesCodes(),
+            CurrencyStatics.getCurrenciesNames(),CurrencyStatics.getCurrenciesSupport(),
+            CurrencyStatics.getDefaultSelection());
 
     /*
-     * Główna metoda programu, która pozwala na wybór opcji i interakcję
-     */
+    =================================================================
+    Główna metoda programu, która pozwala na wybór opcji i interakcję
+    =================================================================
+    */
     public void controlLoop() {
         int option;
 
@@ -57,7 +69,7 @@ public class Control {
                     currencies.clear();
                     try {
                         CurrencyRow row;
-                        row = websiteControl.parseWebsite();
+                        row = websiteReader.readAndParseNBPWebsite(selectedCodes);
                         currencies.getRows().add(row);
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -86,13 +98,18 @@ public class Control {
                     System.out.println("READ_CURRENCIES_FROM_DATABASE");
                     currencies.clear();
 
-                    System.out.println("Selected codes");
-                    System.out.println(codes.toString());
+                    System.out.println(selectedCodes.toString());
+                    System.out.println(selectedDates.toString());
 
                     try {
-                        currencies.setCols(databaseControl.readCurrencyCols(codes, dates));
+                        currencies.setCols(databaseControl.readCurrencyCols(selectedCodes, selectedDates));
                     } catch (SQLException ex) {
                         ex.printStackTrace();
+                    }
+
+                    //print read currencies
+                    for(int i=0;i<currencies.getCols().size();i++){
+                        System.out.println(currencies.getCols().get(i).toString());
                     }
 
                     break;
@@ -101,7 +118,7 @@ public class Control {
                     System.out.println("GET_RANDOM");
                     currencies.clear();
 
-                    currencies.setCols(createTestArrays(codes.getSelectedCodes(), dates.getFrom(), dates.getTo()));
+                    currencies.setCols(createTestArrays(selectedCodes, selectedDates));
                     for (int i = 0; i < currencies.getCols().size(); i++) {
                         System.out.println(currencies.getCols().get(i).toString());
                     }
@@ -120,12 +137,13 @@ public class Control {
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
+                    currencies.clear();
                     break;
 
                 case DELETE_FROM_DATABASE:
                     System.out.println("DELETE_FROM_DATABASE");
                     try {
-                        databaseControl.deleteCurrencyRows(dates);
+                        databaseControl.deleteCurrencyRows(selectedDates);
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
@@ -133,21 +151,16 @@ public class Control {
                     break;
 
                 case SELECT_SHOW:
-                    System.out.println(dates.toString());
-                    System.out.println(codes.toString());
+                    System.out.println(selectedDates.toString());
+                    System.out.println(selectedCodes.toString());
                     break;
 
-                case SELECT_CURRENCY:
-                    System.out.println("Wybierz kody walut");
-                    //warning, poprawic dataReader.getCodes
-                    dataReader.getCodes(codes.getSelectedCodes());
+                case SELECT_CURRENCIES:
+                    dataReader.getCodes(selectedCodes);
                     break;
 
-                case SELECT_DATE:
-                    System.out.println("Podaj date początkową");
-                    dates.setFrom(dataReader.getDate());
-                    System.out.println("Podaj datę końcową");
-                    dates.setTo(dataReader.getDate());
+                case SELECT_DATES:
+                    dataReader.getDates(selectedDates);
                     break;
 
                 case SHOW:
@@ -168,14 +181,17 @@ public class Control {
         } while (option != EXIT);
     }
 
-    private CurrencyCols createTestArrays(ArrayList<String> codes, LocalDate date_from, LocalDate date_to) {
+    private CurrencyCols createTestArrays(CurrencyCodes codes, CurrencyDates dates) {
         Random generator = new Random();
         CurrencyCols cols = new CurrencyCols();
+        ArrayList<String> selectedCodes = codes.getSelectedCodes();
+        LocalDate date_from = LocalDate.of(dates.getDateFrom().getYear(),dates.getDateFrom().getMonth(),dates.getDateFrom().getDay());
+        LocalDate date_to = LocalDate.of(dates.getDateTo().getYear(),dates.getDateTo().getMonth(),dates.getDateTo().getDay());
 
-        for (int i = 0; i < codes.size(); i++) {
+        for (int i = 0; i < selectedCodes.size(); i++) {
             //create new column
             CurrencyCol currencyCol = new CurrencyCol();
-            currencyCol.setCode(codes.get(i));
+            currencyCol.setCode(selectedCodes.get(i));
 
             for (int yearCnt = date_from.getYear(); yearCnt <= date_to.getYear(); yearCnt++) {  //go over years
                 for (int monthCnt = date_from.getMonthValue(); monthCnt <= 12; monthCnt++) { //go over months
@@ -211,15 +227,14 @@ public class Control {
         System.out.println(PUT_TO_DATABASE + " - PUT_TO_DATABASE");
         System.out.println(DELETE_FROM_DATABASE + " - DELETE_FROM_DATABASE");
         System.out.println(SELECT_SHOW + " - SELECT_SHOW");
-        System.out.println(SELECT_CURRENCY + " - SELECT_CURRENCY");
-        System.out.println(SELECT_DATE + " - SELECT_DATE");
+        System.out.println(SELECT_CURRENCIES + " - SELECT_CURRENCY");
+        System.out.println(SELECT_DATES + " - SELECT_DATE");
         System.out.println(SHOW + " - SHOW");
 
     }
 
     private void exit() {
         System.out.println("Koniec programu, papa!");
-        websiteControl.close();
         databaseControl.close();
         dataReader.close();
     }

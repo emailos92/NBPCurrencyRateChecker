@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class DatabaseLogic {
 
@@ -65,7 +64,6 @@ public class DatabaseLogic {
 
     private void insertTableElem(DatabaseConnector db, LocalDate date) throws SQLException {
         //first check we have table with this date in sql ;) create if not
-
         String query = "insert into tables (date) values ('" + Date.valueOf(date) + "')";
         //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
@@ -73,8 +71,7 @@ public class DatabaseLogic {
     }
 
     private void insertCurrencyElem(DatabaseConnector db, String code, double exchangeRate, LocalDate date) throws SQLException {
-        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
-        String query = "insert into " + tableName + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + exchangeRate + ")";
+        String query = "insert into " + code + " (date, exchangerate) values ('" + Date.valueOf(date) + "', " + exchangeRate + ")";
         //System.out.println(query);
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         preparedStatement.executeUpdate();
@@ -108,15 +105,18 @@ public class DatabaseLogic {
 
     public void deleteCurrencyRows(DatabaseConnector db, CurrencyDates dates) throws SQLException {
         //here we have foreign key 'data' and need to remove only in 'tables', others will automatically delete "on delete cascade"
-        PreparedStatement preparedStatement = db.getConnection().prepareStatement("delete from tables where date>='" + Date.valueOf(dates.getFrom()) + "' and date<='" + Date.valueOf(dates.getTo()) + "'");
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement(
+                "delete from tables where date>='"
+                        + Date.valueOf(LocalDate.of(dates.getDateFrom().getYear(), dates.getDateFrom().getMonth(), dates.getDateFrom().getDay()))
+                        + "' and date<='"
+                        + Date.valueOf(LocalDate.of(dates.getDateTo().getYear(), dates.getDateTo().getMonth(), dates.getDateTo().getDay())) + "'");
         preparedStatement.executeUpdate();
     }
 
     public CurrencyCol readCurrencyCol(DatabaseConnector db, String code) throws SQLException {
         CurrencyCol currencyCol = new CurrencyCol();
-        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
 
-        PreparedStatement preparedStatement = db.getConnection().prepareStatement("select * from " + tableName);
+        PreparedStatement preparedStatement = db.getConnection().prepareStatement("select * from " + code);
         ResultSet result = preparedStatement.executeQuery();
         while (result.next()) {
             String name = result.getString("uniquename");
@@ -140,8 +140,10 @@ public class DatabaseLogic {
 
     public CurrencyCol readCurrencyColByDate(DatabaseConnector db, String code, CurrencyDates dates) throws SQLException {
         CurrencyCol currencyCol = new CurrencyCol();
-        String tableName = CurrencyLogic.getCurrencySqlTableName(code);
-        String query = "select * from " + tableName + " where date >= '" + Date.valueOf(dates.getFrom()) + "' and date <= '" + Date.valueOf(dates.getTo()) + "'";
+        String query = "select * from " + code + " where date >= '"
+                + Date.valueOf(LocalDate.of(dates.getDateFrom().getYear(), dates.getDateFrom().getMonth(), dates.getDateFrom().getDay()))
+                + "' and date <= '"
+                + Date.valueOf(LocalDate.of(dates.getDateTo().getYear(),dates.getDateTo().getMonth(),dates.getDateTo().getDay())) + "'";
         PreparedStatement preparedStatement = db.getConnection().prepareStatement(query);
         ResultSet result = preparedStatement.executeQuery();
 

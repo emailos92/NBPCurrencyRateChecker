@@ -4,52 +4,75 @@ import java.time.LocalDate;
 
 public class CurrencyDates {
 
-    LocalDate from;
-    LocalDate to;
+    private SimpleDate dateFrom;
+    private SimpleDate dateTo;
 
     //default last three months
-    public CurrencyDates(){
-        this.from = LocalDate.now().minusMonths(3);
-        this.to = LocalDate.now();
+    public CurrencyDates() {
+        LocalDate from = LocalDate.now().minusMonths(3);
+        LocalDate to = LocalDate.now();
+
+        dateFrom = new SimpleDate(from.getYear(),from.getMonthValue(),from.getDayOfMonth());
+        dateTo = new SimpleDate(to.getYear(),to.getMonthValue(),to.getDayOfMonth());
     }
 
-    public LocalDate getFrom() {
-        return from;
+    public SimpleDate getDateFrom(){
+        return dateFrom;
     }
 
-    public void setFrom(LocalDate from) {
-        this.from = from;
+    public SimpleDate getDateTo(){
+        return dateTo;
     }
 
-    public LocalDate getTo() {
-        return to;
+    public void setDateFrom(int year, int month, int day){
+        dateFrom.setDay(day);
+        dateFrom.setMonth(month);
+        dateFrom.setYear(year);
     }
 
-    public void setTo(LocalDate to) {
-        this.to = to;
+    public void setDateFrom(SimpleDate from){
+        setDateFrom(from.getYear(),from.getMonth(),from.getDay());
     }
 
-    public void setLastXMonths(int months){
-        from = LocalDate.now().minusMonths(months);
-        to = LocalDate.now();
+    public void setDateFrom(LocalDate from){
+        setDateFrom(from.getYear(),from.getMonthValue(),from.getDayOfMonth());
     }
 
-    public void setLastXWeeks(int weeks){
-        from = LocalDate.now().minusWeeks(weeks);
-        to = LocalDate.now();
+    public void setDateTo(int year, int month, int day){
+        dateTo.setDay(day);
+        dateTo.setMonth(month);
+        dateTo.setYear(year);
     }
 
-    public void setSingleDay(LocalDate date){
-        from = date;
-        to = date;
+    public void setDateTo(SimpleDate to){
+        setDateTo(to.getYear(),to.getMonth(),to.getDay());
     }
 
-    public void setNow(){
-        from = LocalDate.now();
-        to = LocalDate.now();
-    }
+//    public void setDateTo(LocalDate to){
+//        setDateTo(to.getYear(),to.getMonthValue(),to.getDayOfMonth());
+//    }
+//
+//    public void setLastXMonths(int months) {
+//        setDateFrom(LocalDate.now().minusMonths(months));
+//        setDateTo(LocalDate.now());
+//    }
+//
+//    public void setLastXWeeks(int weeks) {
+//        setDateFrom(LocalDate.now().minusWeeks(weeks));
+//        setDateTo(LocalDate.now());
+//    }
+//
+//    public void setSingleDay(LocalDate date) {
+//        setDateFrom(date);
+//        setDateTo(date);
+//    }
+//
+//    public void setNow() {
+//        setDateFrom(LocalDate.now());
+//        setDateTo(LocalDate.now());
+//    }
 
-    public String toString(){
-        return from + " : " + to;
+    public String toString() {
+        return dateFrom + " : " + dateTo;
     }
 }
