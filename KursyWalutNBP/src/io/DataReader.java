@@ -40,117 +40,132 @@ public class DataReader {
     */
 
     private SimpleDate changeDate(SimpleDate date, int option) {
-        LocalDate loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay());
+        LocalDate loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay());
 
         switch (option) {
             case PLUS_DAY:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).plusDays(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).plusDays(1);
                 break;
             case PLUS_MONTH:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).plusMonths(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).plusMonths(1);
                 break;
             case PLUS_YEAR:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).plusYears(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).plusYears(1);
                 break;
             case MINUS_DAY:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).minusDays(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).minusDays(1);
                 break;
             case MINUS_MONTH:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).minusMonths(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).minusMonths(1);
                 break;
             case MINUS_YEAR:
-                loc = LocalDate.of(date.getYear(),date.getMonth(),date.getDay()).minusYears(1);
+                loc = LocalDate.of(date.getYear(), date.getMonth(), date.getDay()).minusYears(1);
                 break;
             default:
                 break;
         }
 
-        System.out.println(date.toString());
+        return new SimpleDate(loc.getYear(), loc.getMonthValue(), loc.getDayOfMonth());
+    }
 
-        return new SimpleDate(loc.getYear(),loc.getMonthValue(),loc.getDayOfMonth());
+    private void printDates(SimpleDate from, SimpleDate to) {
+        System.out.println("\n===================================");
+        System.out.println("( " + from.toDateString() + " ) <===> ( " + to.toDateString() + " )");
+        System.out.println("===================================");
     }
 
     public void getDates(CurrencyDates dates) {
 
-        LocalDate start = LocalDate.of(2000,1,1);
-        LocalDate end = LocalDate.now();
-        SimpleDate startDate = new SimpleDate(start.getYear(),start.getMonthValue(),start.getDayOfMonth());
-        SimpleDate endDate = new SimpleDate(end.getYear(),end.getMonthValue(),end.getDayOfMonth());
-
+        LocalDate start = LocalDate.of(2000, 1, 1);
+        LocalDate end = LocalDate.now(); //LocalDate.now()
+        SimpleDate startDate = new SimpleDate(start.getYear(), start.getMonthValue(), start.getDayOfMonth());
+        SimpleDate endDate = new SimpleDate(end.getYear(), end.getMonthValue(), end.getDayOfMonth());
         SimpleDate tmpFrom = new SimpleDate();
         SimpleDate tmpTo = new SimpleDate();
 
         int option, option2;
         do {
-            System.out.print("0 - EXIT\n1 - SELECT FROM\n2 - SELECT TO\n3 - SELECT BOTH\n");
-            System.out.println(dates.toString());
-            option = getInt();
 
+            printDates(dates.getDateFrom(), dates.getDateTo());
+            System.out.print(" Which date do you want to change?\n 0 - EXIT\n 1 - FROM\n 2 - TO\n 3 - BOTH\n");
+
+            option = getInt();
             if (option > 0) {
                 do {
-                    System.out.print("0 - EXIT\n-1 / 1 - DAY\n-2 / 2 - MONTH\n-3 / 3 - YEAR\n");
-                    System.out.println(dates.toString());
+                    //save old dates here
+                    tmpFrom.set(dates.getDateFrom());
+                    tmpTo.set(dates.getDateTo());
+                    System.out.println("TMP: FROM " + tmpFrom.toDateString() + " TO " + tmpTo.toDateString());
 
-                    //save dates here
-                    tmpFrom = dates.getDateFrom();
-                    tmpTo = dates.getDateTo();
+                    printDates(dates.getDateFrom(), dates.getDateTo());
 
-                    System.out.println("TMP FROM: " + tmpFrom.toString() + " || TMP_TO: " + tmpTo.toString());
-
+                    System.out.print("  0 - EXIT\n" + "  1 - ( + ) DAY\n" + " -1 - ( - ) DAY\n" + "  2 - ( + ) MONTH\n" +
+                            " -2 - ( - ) MONTH\n" + "  3 - ( + ) YEAR\n" + " -3 - ( - ) YEAR\n");
                     option2 = getInt();
 
                     if (option == SELECT_FROM) {
+                        System.out.println("Changeing date from:");
                         dates.setDateFrom(changeDate(dates.getDateFrom(), option2));
                     } else if (option == SELECT_TO) {
+                        System.out.println("Changing date to:");
                         dates.setDateTo(changeDate(dates.getDateTo(), option2));
                     } else if (option == SELECT_BOTH) {
+                        System.out.println("Changing both dates:");
                         if (option2 > 0) //+++
-                            dates.setDateFrom(changeDate(dates.getDateFrom(), option2));
-                        else if (option2 < 0)// ---
                             dates.setDateTo(changeDate(dates.getDateTo(), option2));
+                        else if (option2 < 0)// ---
+                            dates.setDateFrom(changeDate(dates.getDateFrom(), option2));
                     }
+
+                    System.out.println("CHG: FROM " + dates.getDateFrom().toDateString() + " TO " + dates.getDateTo().toDateString());
 
                     if (option2 > 0) { // ++++ (DAY, MONTH, YEAR)
                         if (option == SELECT_FROM) { //we can simple plus dateFrom up to dateTo, when dateFrom > dateTo, revert changes
                             if (dates.getDateFrom().isAfter(dates.getDateTo())) {
+                                System.out.println("Can't increment date from: (from) <= (to)");
                                 dates.setDateFrom(tmpFrom);
-                                System.out.println("SELECT_FROM " + option2 + " revert " + dates.getDateFrom().toString());
                             }
                         } else if (option == SELECT_TO) { //we can simple plus dateTo to dateNow;
                             if (dates.getDateTo().isAfter(endDate)) {
+                                System.out.println("Can't increment date to: (to) <= (" + endDate.toDateString() + ")");
                                 dates.setDateTo(tmpTo);
-                                System.out.println("SELECT_TO " + option2 + " revert " + dates.getDateTo().toString());
                             }
-                        } else {  //we can simply plus dates to dateNow
+                        } else if (option == SELECT_BOTH) {  //we can simply plus dates to dateNow
                             if (dates.getDateTo().isAfter(endDate)) {
+                                System.out.println("Can't increment both dates: (to) <= (" + endDate.toDateString() + ")");
                                 dates.setDateTo(tmpTo); //revert changes
-                                System.out.println("SELECT_BOTH " + option2 + " revert " + dates.getDateTo().toString());
+                                dates.setDateFrom(tmpTo); //revert changes
                             } else {
-                                dates.setDateFrom(LocalDate.of(dates.getDateTo().getYear(), dates.getDateTo().getMonth(), dates.getDateTo().getDay())); //put changes to dateTo too :)
-                                System.out.println("SELECT_BOTH " + option2 + " put to date from too " + dates.getDateTo().toString());
+                                dates.setDateFrom(dates.getDateTo());
                             }
                         }
                     }
-//                    else if (option2 < 0) { // ---- (DAY, MONTH, YEAR)
-//                        if (option == SELECT_FROM) { //we can simple minus dateFrom to 2000.01.01;
-//                            if (dates.getDateFrom().isBefore(startDate)) {
-//                                dates.setDateFrom(tmpFrom);
-//                            }
-//                        } else if (option == SELECT_TO) { //we can simple minus dateTo to dateFrom
-//                            if (dates.getDateTo().isBefore(dates.getDateTo())) {
-//                                dates.setDateTo(tmpTo);
-//                            }
-//                        } else {  //we can simply minus dates to 2000.01.01;
-//                            if (dates.getDateFrom().isBefore(startDate)) {
-//                                dates.setDateFrom(tmpFrom); //revert changes
-//                            } else {
-//                                dates.setDateTo(dates.getDateFrom().getYear(), dates.getDateFrom().getMonth(), dates.getDateFrom().getDay()); //put changes to dateTo too :)
-//                            }
-//                        }
-//                    }
+                    else if (option2 < 0) { // ---- (DAY, MONTH, YEAR)
+                        if (option == SELECT_FROM) { //we can simple minus dateFrom to 2000.01.01;
+                            if (dates.getDateFrom().isBefore(startDate)) {
+                                System.out.println("Can't decrement date from: (" + startDate.toDateString() + ") <= (to)");
+                                dates.setDateFrom(tmpFrom);
+                            }
+                        } else if (option == SELECT_TO) { //we can simple minus dateTo to dateFrom
+                            if (dates.getDateTo().isBefore(dates.getDateTo())) {
+                                System.out.println("Can't decrement date to: (from) <= (to)");
+                                dates.setDateTo(tmpTo);
+                            }
+                        } else if (option == SELECT_BOTH){  //we can simply minus dates to 2000.01.01;
+                            if (dates.getDateFrom().isBefore(startDate)) {
+                                System.out.println("Can't decrement both dates: (" + startDate.toDateString() + ") <= (to)");
+                                dates.setDateFrom(tmpFrom); //revert changes
+                                dates.setDateTo(tmpFrom); //revert changes
+                            } else {
+                                dates.setDateTo(dates.getDateFrom()); //put changes to dateTo too :)
+                            }
+                        }
+                    }
+
+                    System.out.println("LST: FROM " + dates.getDateFrom().toDateString() + " TO " + dates.getDateTo().toDateString());
                 } while (option2 != 0);
             }
-        } while (option != 0);
+        } while (option > 0);
     }
 
 

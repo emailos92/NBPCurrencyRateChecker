@@ -34,10 +34,6 @@ public class CurrencyDates {
         setDateFrom(from.getYear(),from.getMonth(),from.getDay());
     }
 
-    public void setDateFrom(LocalDate from){
-        setDateFrom(from.getYear(),from.getMonthValue(),from.getDayOfMonth());
-    }
-
     public void setDateTo(int year, int month, int day){
         dateTo.setDay(day);
         dateTo.setMonth(month);

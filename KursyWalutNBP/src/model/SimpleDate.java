@@ -44,13 +44,17 @@ public class SimpleDate {
         this.year = year;
     }
 
+    public void set(SimpleDate date){
+        day = date.getDay();
+        month = date.getMonth();
+        year = date.getYear();
+    }
+
     public boolean isAfter(SimpleDate out){
         LocalDate date = LocalDate.of(year,month,day);
         LocalDate outDate = LocalDate.of(out.getYear(),out.getMonth(),out.getDay());
 
-        System.out.println("<= " + year + " " + month + " " + day);
-        System.out.println("=> " + out.getYear() + " " + out.getMonth() + " " + out.getDay());
-        System.out.println("is after: " + date.isAfter(outDate));
+        System.out.println("AFTER = " + date.isAfter(outDate));
         return date.isAfter(outDate);
     }
 
@@ -58,13 +62,17 @@ public class SimpleDate {
         LocalDate date = LocalDate.of(year,month,day);
         LocalDate outDate = LocalDate.of(out.getYear(),out.getMonth(),out.getDay());
 
-        System.out.println("<= " + year + " " + month + " " + day);
-        System.out.println("=> " + out.getYear() + " " + out.getMonth() + " " + out.getDay());
-        System.out.println("is after: " + date.isAfter(outDate));
+        System.out.println("BEFORE = " + date.isBefore(outDate));
         return date.isBefore(outDate);
     }
 
     public String toString(){
         return year + " " + month + " " + day;
+    }
+
+    public String toDateString(){
+        LocalDate date = LocalDate.of(year,month,day);
+
+        return String.valueOf(date);
     }
 }
